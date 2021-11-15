@@ -1,10 +1,10 @@
-all: a.out
+all: main.o
 
-a.out: test.cpp mergesort.hpp countingsort.hpp
-	g++-10 -g -Wall -std=c++20 test.cpp
+main.o: main.cpp tetromino.o
+	g++-10 -g -Wall -std=c++20 -o main.o main.cpp tetromino.o -lsfml-window -lsfml-graphics -lsfml-system 
 
-test: a.out
-	./a.out
+tetromino.o: Tetromino/Tetromino.hpp Tetromino/Tetromino.cpp
+	g++-10 -std=c++20 -c Tetromino/Tetromino.cpp
 
 clean:
-	rm a.out
+	rm -f *.o
