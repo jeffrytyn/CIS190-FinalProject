@@ -21,17 +21,27 @@ int Board::get_x_y(int x, int y)
 
 void Board::draw(sf::RenderTarget &rt) const
 {
-  sf::RectangleShape rectangle(sf::Vector2f(CELL_SIZE, CELL_SIZE));
-  rectangle.setOutlineThickness(CELL_BORDER);
-  rectangle.setOutlineColor(sf::Color::Black);
+  sf::RectangleShape block{sf::Vector2f(CELL_SIZE, CELL_SIZE)};
+  block.setOutlineThickness(CELL_BORDER);
+  block.setOutlineColor(sf::Color::Black);
   for (int i = 0; i < ROWS; i++)
   {
     for (int j = 0; j < COLS; j++)
     {
-      int color = board.at(i).at(j);
-      rectangle.setFillColor(color == -1 ? sf::Color(127, 127, 127) : colors.at(color));
-      rectangle.setPosition(left + j * BORDERED_CELL_SIZE, top + i * BORDERED_CELL_SIZE);
-      rt.draw(rectangle);
+      int shape = board.at(i).at(j);
+      block.setFillColor(shape == -1 ? sf::Color(127, 127, 127) : colors.at(shape));
+      block.setPosition(left + j * BORDERED_CELL_SIZE, top + i * BORDERED_CELL_SIZE);
+      rt.draw(block);
     }
   }
+}
+
+void Board::drawCoord(sf::RenderTarget &rt, int x, int y, int color) const
+{
+  sf::RectangleShape block{sf::Vector2f(CELL_SIZE, CELL_SIZE)};
+  block.setOutlineThickness(CELL_BORDER);
+  block.setOutlineColor(sf::Color::Black);
+  block.setFillColor(colors.at(color));
+  block.setPosition(left + x * BORDERED_CELL_SIZE, top + y * BORDERED_CELL_SIZE);
+  rt.draw(block);
 }

@@ -81,61 +81,44 @@ Tetromino &Tetromino::operator=(const Tetromino &tet)
   return *this;
 }
 
-bool Tetromino::in_piece(int x, int y)
+std::array<sf::Vector2i, Tetromino::NUM_BLOCKS> Tetromino::get_coords() const
 {
-  for (auto &coord : coords)
-  {
-    if (coord.x == x && coord.y == y)
-      return true;
-  }
-  return false;
+  return coords;
 }
 
-bool Tetromino::can_move(Board &board, int x_delta, int y_delta)
+int Tetromino::get_shape() const
 {
-  int cols = board.COLS, rows = board.ROWS;
-  for (int i = 0; i < NUM_BLOCKS; i++)
-  {
-    int x = coords[i].x + x_delta, y = coords[i].y + y_delta;
-    if (!(x < cols && y < rows && x >= 0 && y >= 0 && (in_piece(x, y) || board.get_x_y(x, y) == -1)))
-      return false;
-  }
-  return true;
+  return shape;
 }
 
-bool Tetromino::offset(Board &board, int x_delta, int y_delta)
+void Tetromino::offset(int x_delta, int y_delta)
 {
-  if (!can_move(board, x_delta, y_delta))
-    return false;
-  for (int i = 0; i < NUM_BLOCKS; i++)
-  {
-    board.set_x_y(coords[i].x, coords[i].y, -1);
-  }
   for (int i = 0; i < NUM_BLOCKS; i++)
   {
     coords[i].x += x_delta;
     coords[i].y += y_delta;
-    board.set_x_y(coords[i].x, coords[i].y, shape);
   }
-  return true;
 }
 
-bool Tetromino::place(Board &board)
+void Tetromino::move_down()
 {
-  return this->offset(board, 0, 0);
+  return this->offset(0, 1);
 }
 
-bool Tetromino::move_down(Board &board)
+void Tetromino::move_left()
 {
-  return this->offset(board, 0, 1);
+  return this->offset(-1, 0);
 }
 
-bool Tetromino::move_left(Board &board)
+void Tetromino::move_right()
 {
-  return this->offset(board, -1, 0);
+  return this->offset(1, 0);
 }
 
-bool Tetromino::move_right(Board &board)
+void Tetromino::draw(sf::RenderTarget &rt, const Board &board) const
 {
-  return this->offset(board, 1, 0);
+  for (sf::Vector2i coord : coords)
+  {
+    board.drawCoord(rt, coord.x, coord.y, shape);
+  }
 }

@@ -10,15 +10,16 @@ public:
   Tetromino(int shape);
   Tetromino &operator=(const Tetromino &t);
 
-  bool in_piece(int x, int y);
-  bool can_move(Board &board, int x_delta, int y_delta);
-  bool offset(Board &board, int x_delta, int y_delta);
-  bool place(Board &board);
-  bool move_down(Board &board);
-  bool move_left(Board &board);
-  bool move_right(Board &board);
-  bool rotate_right(Board &board);
-  bool rotate_left(Board &board);
+  std::array<sf::Vector2i, NUM_BLOCKS> get_coords() const;
+  int get_shape() const;
+  void offset(int x_delta, int y_delta);
+  void move_down();
+  void move_left();
+  void move_right();
+  void rotate_right();
+  void rotate_left();
+
+  void draw(sf::RenderTarget &rt, const Board &board) const;
 
 private:
   int shape;

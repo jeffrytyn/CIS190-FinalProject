@@ -27,6 +27,7 @@ public:
   void set_x_y(int x, int y, int shape);
   int get_x_y(int x, int y);
   void draw(sf::RenderTarget &rt) const;
+  void drawCoord(sf::RenderTarget &rt, int x, int y, int color) const;
 
 private:
   std::array<std::array<int, COLS>, ROWS> board;
