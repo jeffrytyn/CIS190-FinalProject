@@ -26,6 +26,7 @@ public:
   Board(int t, int l);
   void set_x_y(int x, int y, int shape);
   int get_x_y(int x, int y);
+  int clear_rows();
   void draw(sf::RenderTarget &rt) const;
   void drawCoord(sf::RenderTarget &rt, int x, int y, int color) const;
 

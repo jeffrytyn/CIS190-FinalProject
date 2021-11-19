@@ -2,9 +2,10 @@
 #include <random>
 #include <iostream>
 
-Game::Game() : board{BOARD_VERT_OFFSET, BOARD_HORZ_OFFSET}, piece{1}
+Game::Game() : board{BOARD_VERT_OFFSET, BOARD_HORZ_OFFSET}, piece{(Shape)(rand() % 7)}
 {
   secondsSinceLastMove = sf::milliseconds(0);
+  piece.move(board.COLS / 2 - 1, 0);
 }
 
 void Game::handleKey(const sf::Keyboard::Key &c)
@@ -41,7 +42,10 @@ void Game::update(const sf::Time &delta)
   if (secondsSinceLastMove > FRAME_TIME)
   {
     if (!can_move(0, 1))
+    {
+      std::cout << "Start new round\n";
       newRound();
+    }
     else
       piece.move_down();
     secondsSinceLastMove = sf::Time::Zero;
@@ -50,22 +54,29 @@ void Game::update(const sf::Time &delta)
 
 void Game::newRound()
 {
-  std::array<sf::Vector2i, Tetromino::NUM_BLOCKS> coords = piece.get_coords();
-  for (int i = 0; i < Tetromino::NUM_BLOCKS; i++)
+  sf::Vector2i center = piece.get_center();
+  board.set_x_y(center.x, center.y, piece.get_shape());
+  for (sf::Vector2i offset : piece.get_offsets())
   {
-    board.set_x_y(coords[i].x, coords[i].y, piece.get_shape());
+    board.set_x_y(center.x + offset.x, center.y + offset.y, piece.get_shape());
   }
-  piece = Tetromino{rand() % 7};
+  piece = Tetromino{(Shape)(rand() % 7)};
+  piece.move(board.COLS / 2 - 1, 0);
+}
+
+bool Game::check_free_coord(int x, int y)
+{
+  return x < board.COLS && y < board.ROWS && x >= 0 && y >= 0 && board.get_x_y(x, y) == -1;
 }
 
 bool Game::can_move(int x_delta, int y_delta)
 {
-  int cols = board.COLS, rows = board.ROWS;
-  std::array<sf::Vector2i, Tetromino::NUM_BLOCKS> coords = piece.get_coords();
-  for (int i = 0; i < Tetromino::NUM_BLOCKS; i++)
+  sf::Vector2i center = piece.get_center();
+  if (!check_free_coord(center.x + x_delta, center.y + y_delta))
+    return false;
+  for (sf::Vector2i offset : piece.get_offsets())
   {
-    int x = coords[i].x + x_delta, y = coords[i].y + y_delta;
-    if (!(x < cols && y < rows && x >= 0 && y >= 0 && board.get_x_y(x, y) == -1))
+    if (!check_free_coord(center.x + offset.x + x_delta, center.y + offset.y + y_delta))
       return false;
   }
   return true;

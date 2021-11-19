@@ -19,6 +19,15 @@ int Board::get_x_y(int x, int y)
   return board.at(y).at(x);
 }
 
+int Board::clear_rows()
+{
+  int num_cleared = 0;
+  for (std::array row : board)
+  {
+  }
+  return num_cleared;
+}
+
 void Board::draw(sf::RenderTarget &rt) const
 {
   sf::RectangleShape block{sf::Vector2f(CELL_SIZE, CELL_SIZE)};

@@ -1,71 +1,64 @@
 #include "Tetromino.hpp"
 #include <iostream>
 
-Tetromino::Tetromino(int shape) : shape{shape}
+Tetromino::Tetromino(Shape shape) : shape{shape}
 {
   switch (shape)
   {
-  case 0: // I
+  case I: // I
   {
-    coords[0] = sf::Vector2i(0, 0);
-    coords[1] = sf::Vector2i(1, 0);
-    coords[2] = sf::Vector2i(2, 0);
-    coords[3] = sf::Vector2i(3, 0);
-    center = -1;
+    center = sf::Vector2i(1, 0);
+    offsets[0] = sf::Vector2i(-1, 0);
+    offsets[1] = sf::Vector2i(2, 0);
+    offsets[2] = sf::Vector2i(3, 0);
     break;
   }
-  case 1: // J
+  case J: // J
   {
-    coords[0] = sf::Vector2i(0, 0);
-    coords[1] = sf::Vector2i(0, 1);
-    coords[2] = sf::Vector2i(1, 1);
-    coords[3] = sf::Vector2i(2, 1);
-    center = 2;
+    center = sf::Vector2i(1, 1);
+    offsets[0] = sf::Vector2i(-1, -1);
+    offsets[1] = sf::Vector2i(-1, 0);
+    offsets[2] = sf::Vector2i(1, 0);
     break;
   }
-  case 2: // L
+  case L: // L
   {
-    coords[0] = sf::Vector2i(0, 1);
-    coords[1] = sf::Vector2i(1, 1);
-    coords[2] = sf::Vector2i(2, 1);
-    coords[3] = sf::Vector2i(2, 0);
-    center = 1;
+    center = sf::Vector2i(1, 1);
+    offsets[0] = sf::Vector2i(-1, 0);
+    offsets[1] = sf::Vector2i(1, 0);
+    offsets[2] = sf::Vector2i(1, -1);
     break;
   }
-  case 3: // O
+  case O: // O
   {
-    coords[0] = sf::Vector2i(0, 0);
-    coords[1] = sf::Vector2i(1, 0);
-    coords[2] = sf::Vector2i(0, 1);
-    coords[3] = sf::Vector2i(1, 1);
-    center = -1;
+    center = sf::Vector2i(0, 0);
+    offsets[0] = sf::Vector2i(1, 0);
+    offsets[1] = sf::Vector2i(0, 1);
+    offsets[2] = sf::Vector2i(1, 1);
     break;
   }
-  case NUM_BLOCKS: // S
+  case S: // S
   {
-    coords[0] = sf::Vector2i(0, 1);
-    coords[1] = sf::Vector2i(1, 1);
-    coords[2] = sf::Vector2i(1, 0);
-    coords[3] = sf::Vector2i(2, 0);
-    center = 1;
+    center = sf::Vector2i(1, 1);
+    offsets[0] = sf::Vector2i(-1, 0);
+    offsets[1] = sf::Vector2i(0, -1);
+    offsets[2] = sf::Vector2i(1, -1);
     break;
   }
-  case 5: // T
+  case T: // T
   {
-    coords[0] = sf::Vector2i(0, 1);
-    coords[1] = sf::Vector2i(1, 1);
-    coords[2] = sf::Vector2i(1, 0);
-    coords[3] = sf::Vector2i(2, 1);
-    center = 1;
+    center = sf::Vector2i(1, 1);
+    offsets[0] = sf::Vector2i(-1, 0);
+    offsets[1] = sf::Vector2i(0, -1);
+    offsets[2] = sf::Vector2i(1, 0);
     break;
   }
-  case 6: // Z
+  case Z: // Z
   {
-    coords[0] = sf::Vector2i(0, 0);
-    coords[1] = sf::Vector2i(1, 0);
-    coords[2] = sf::Vector2i(1, 1);
-    coords[3] = sf::Vector2i(2, 1);
-    center = 2;
+    center = sf::Vector2i(1, 1);
+    offsets[0] = sf::Vector2i(0, -1);
+    offsets[1] = sf::Vector2i(-1, -1);
+    offsets[2] = sf::Vector2i(1, 0);
     break;
   }
   default:
@@ -77,48 +70,62 @@ Tetromino &Tetromino::operator=(const Tetromino &tet)
 {
   center = tet.center;
   shape = tet.shape;
-  coords = tet.coords;
+  offsets = tet.offsets;
   return *this;
 }
 
-std::array<sf::Vector2i, Tetromino::NUM_BLOCKS> Tetromino::get_coords() const
-{
-  return coords;
-}
-
-int Tetromino::get_shape() const
+Shape Tetromino::get_shape() const
 {
   return shape;
 }
 
-void Tetromino::offset(int x_delta, int y_delta)
+sf::Vector2i Tetromino::get_center() const
 {
-  for (int i = 0; i < NUM_BLOCKS; i++)
-  {
-    coords[i].x += x_delta;
-    coords[i].y += y_delta;
-  }
+  return center;
+}
+
+std::array<sf::Vector2i, Tetromino::NUM_OFFSETS> Tetromino::get_offsets() const
+{
+  return offsets;
+}
+
+void Tetromino::move(int x_delta, int y_delta)
+{
+  center.x += x_delta;
+  center.y += y_delta;
 }
 
 void Tetromino::move_down()
 {
-  return this->offset(0, 1);
+  return this->move(0, 1);
 }
 
 void Tetromino::move_left()
 {
-  return this->offset(-1, 0);
+  return this->move(-1, 0);
 }
 
 void Tetromino::move_right()
 {
-  return this->offset(1, 0);
+  return this->move(1, 0);
+}
+
+void Tetromino::rotate_right()
+{
+  // wall kicks implement in Game.cpp (if we even do that lOl)
+  // rotate clockwise
+}
+
+void Tetromino::rotate_left()
+{
+  // rotate counterclockwise
 }
 
 void Tetromino::draw(sf::RenderTarget &rt, const Board &board) const
 {
-  for (sf::Vector2i coord : coords)
+  board.drawCoord(rt, center.x, center.y, shape);
+  for (sf::Vector2i offset : offsets)
   {
-    board.drawCoord(rt, coord.x, coord.y, shape);
+    board.drawCoord(rt, center.x + offset.x, center.y + offset.y, shape);
   }
 }
