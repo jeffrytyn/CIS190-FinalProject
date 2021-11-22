@@ -2,10 +2,10 @@
 #include <random>
 #include <iostream>
 
-Game::Game() : board{BOARD_VERT_OFFSET, BOARD_HORZ_OFFSET}, piece{(Shape)(rand() % 7)}
+Game::Game() : board{BOARD_VERT_OFFSET, BOARD_HORZ_OFFSET}, score{0}
 {
+  genPiece();
   secondsSinceLastMove = sf::milliseconds(0);
-  piece.move(board.COLS / 2 - 1, 0);
 }
 
 void Game::handleKey(const sf::Keyboard::Key &c)
@@ -52,6 +52,12 @@ void Game::update(const sf::Time &delta)
   }
 }
 
+void Game::genPiece()
+{
+  piece = Tetromino{(Shape)(rand() % 7)};
+  piece.move(board.COLS / 2 - 1, 0);
+}
+
 void Game::newRound()
 {
   sf::Vector2i center = piece.get_center();
@@ -60,8 +66,14 @@ void Game::newRound()
   {
     board.set_x_y(center.x + offset.x, center.y + offset.y, piece.get_shape());
   }
-  piece = Tetromino{(Shape)(rand() % 7)};
-  piece.move(board.COLS / 2 - 1, 0);
+  int cleared = board.clear_rows();
+  if (cleared != 0)
+  {
+    // increment score
+    score += cleared;
+    std::cout << "Score: " << score << "\n";
+  }
+  genPiece();
 }
 
 bool Game::check_free_coord(int x, int y)

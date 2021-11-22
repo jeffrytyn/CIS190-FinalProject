@@ -18,6 +18,7 @@ class Tetromino
 {
 public:
   static constexpr int NUM_OFFSETS = 3;
+  Tetromino();
   Tetromino(Shape shape);
   Tetromino &operator=(const Tetromino &t);
 
@@ -37,4 +38,5 @@ private:
   Shape shape;
   sf::Vector2i center;
   std::array<sf::Vector2i, NUM_OFFSETS> offsets;
+  int orientation;
 };

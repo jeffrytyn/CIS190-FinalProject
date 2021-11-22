@@ -31,7 +31,7 @@ public:
   void drawCoord(sf::RenderTarget &rt, int x, int y, int color) const;
 
 private:
-  std::array<std::array<int, COLS>, ROWS> board;
+  std::vector<std::array<int, COLS>> board;
   int top;
   int left;
 };

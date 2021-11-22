@@ -1,7 +1,9 @@
 #include "Tetromino.hpp"
 #include <iostream>
 
-Tetromino::Tetromino(Shape shape) : shape{shape}
+Tetromino::Tetromino() {}
+
+Tetromino::Tetromino(Shape shape) : shape{shape}, orientation{0}
 {
   switch (shape)
   {
@@ -71,6 +73,7 @@ Tetromino &Tetromino::operator=(const Tetromino &tet)
   center = tet.center;
   shape = tet.shape;
   offsets = tet.offsets;
+  orientation = tet.orientation;
   return *this;
 }
 
@@ -114,11 +117,45 @@ void Tetromino::rotate_right()
 {
   // wall kicks implement in Game.cpp (if we even do that lOl)
   // rotate clockwise
+  if (shape == O)
+    return;
+  if (shape == I)
+  {
+  }
+  else
+  {
+    std::array temp = offsets;
+    for (sf::Vector2i offset : offsets)
+    {
+      int old_x = offset.x;
+      int old_y = offset.y;
+      offset.x = -old_y;
+      offset.y = old_x;
+    }
+    // if rotation is out of bounds, try wall kicks
+    // all wall kicks fail = restore temp as offsets
+  }
 }
 
 void Tetromino::rotate_left()
 {
   // rotate counterclockwise
+  if (shape == O)
+    return;
+  if (shape == I)
+  {
+  }
+  else
+  {
+    std::array temp = offsets;
+    for (sf::Vector2i offset : offsets)
+    {
+      int old_x = offset.x;
+      int old_y = offset.y;
+      offset.x = old_y;
+      offset.y = -old_x;
+    }
+  }
 }
 
 void Tetromino::draw(sf::RenderTarget &rt, const Board &board) const

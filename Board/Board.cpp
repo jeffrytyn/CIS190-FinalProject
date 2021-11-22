@@ -2,10 +2,11 @@
 
 Board::Board(int t, int l) : top{t}, left{l}
 {
-  board.fill(std::array<int, COLS>{});
-  for (auto &row : board)
+  for (int i = 0; i < ROWS; i++)
   {
+    std::array<int, COLS> row;
     row.fill(-1);
+    board.push_back(row);
   }
 };
 
@@ -22,8 +23,22 @@ int Board::get_x_y(int x, int y)
 int Board::clear_rows()
 {
   int num_cleared = 0;
-  for (std::array row : board)
+  int i = 0;
+  while (i < ROWS)
   {
+    std::array row = board.at(i);
+    if (!std::count(row.begin(), row.end(), -1))
+    {
+      board.erase(std::next(board.begin() + i));
+      std::array<int, COLS> empty_row;
+      empty_row.fill(-1);
+      board.push_back(empty_row);
+      num_cleared++;
+    }
+    else
+    {
+      i++;
+    }
   }
   return num_cleared;
 }

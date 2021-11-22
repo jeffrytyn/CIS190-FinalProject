@@ -16,10 +16,12 @@ public:
 
   bool check_free_coord(int x, int y);
   bool can_move(int x_delta, int y_delta);
+  void genPiece();
   void newRound();
 
 private:
   sf::Time secondsSinceLastMove;
   Board board;
   Tetromino piece;
+  int score;
 };
