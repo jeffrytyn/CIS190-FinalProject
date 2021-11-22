@@ -1,6 +1,15 @@
 #include "Tetromino.hpp"
 #include <iostream>
 
+const std::array<std::array<sf::Vector2i, Tetromino::NUM_KICKS>, Tetromino::NUM_ORIENTATIONS> Tetromino::norm_cw_wallkicks = {{{sf::Vector2i(-1, 0), sf::Vector2i(-1, -1), sf::Vector2i(0, 2), sf::Vector2i(-1, 2)},
+                                                                                                                               {sf::Vector2i(1, 0), sf::Vector2i(1, 1), sf::Vector2i(0, -2), sf::Vector2i(1, -2)},
+                                                                                                                               {sf::Vector2i(1, 0), sf::Vector2i(1, -1), sf::Vector2i(0, 2), sf::Vector2i(1, 2)},
+                                                                                                                               {sf::Vector2i(-1, 0), sf::Vector2i(-1, 1), sf::Vector2i(0, -2), sf::Vector2i(-1, -2)}}};
+const std::array<std::array<sf::Vector2i, Tetromino::NUM_KICKS>, Tetromino::NUM_ORIENTATIONS> Tetromino::i_cw_wallkicks = {{{sf::Vector2i(-2, 0), sf::Vector2i(1, 0), sf::Vector2i(-2, 1), sf::Vector2i(1, -2)},
+                                                                                                                            {sf::Vector2i(-1, 0), sf::Vector2i(2, 0), sf::Vector2i(-1, -2), sf::Vector2i(2, 1)},
+                                                                                                                            {sf::Vector2i(2, 0), sf::Vector2i(-1, 0), sf::Vector2i(2, -1), sf::Vector2i(-1, 2)},
+                                                                                                                            {sf::Vector2i(1, 0), sf::Vector2i(-2, 0), sf::Vector2i(1, 2), sf::Vector2i(-2, -1)}}};
+
 Tetromino::Tetromino() {}
 
 Tetromino::Tetromino(Shape shape) : shape{shape}, orientation{0}
@@ -87,9 +96,19 @@ sf::Vector2i Tetromino::get_center() const
   return center;
 }
 
+void Tetromino::set_center(sf::Vector2i new_center)
+{
+  center = new_center;
+}
+
 std::array<sf::Vector2i, Tetromino::NUM_OFFSETS> Tetromino::get_offsets() const
 {
   return offsets;
+}
+
+void Tetromino::set_offsets(std::array<sf::Vector2i, Tetromino::NUM_OFFSETS> new_offsets)
+{
+  offsets = new_offsets;
 }
 
 void Tetromino::move(int x_delta, int y_delta)
@@ -190,19 +209,32 @@ void Tetromino::rotate_left()
 }
 
 // wallkicks are used in case rotations go out of bounds/collide with other pieces
+// called after rotation
 void Tetromino::right_wallkick(int test_num)
 {
+  sf::Vector2i kick;
   if (shape == I)
-    ;
-  sf::Vector2i kick = norm_cw_wallkicks.at(orientation == 0 ? 3 : orientation - 1).at(test_num);
+  {
+    kick = i_cw_wallkicks.at(orientation == 0 ? 3 : orientation - 1).at(test_num);
+  }
+  else
+  {
+    kick = norm_cw_wallkicks.at(orientation == 0 ? 3 : orientation - 1).at(test_num);
+  }
   move(kick.x, kick.y);
 }
 
 void Tetromino::left_wallkick(int test_num)
 {
+  sf::Vector2i kick;
   if (shape == I)
-    ;
-  sf::Vector2i kick = norm_cw_wallkicks.at(orientation == 3 ? 0 : orientation + 1).at(test_num);
+  {
+    kick = i_cw_wallkicks.at(orientation).at(test_num);
+  }
+  else
+  {
+    kick = norm_cw_wallkicks.at(orientation).at(test_num);
+  }
   move(-kick.x, -kick.y);
 }
 

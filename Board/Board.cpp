@@ -1,5 +1,15 @@
 #include "Board.hpp"
 
+const sf::Color Board::EMPTY_CELL = sf::Color(127, 127, 127);
+const std::array<sf::Color, 7> Board::colors = {
+    sf::Color(0, 255, 255),
+    sf::Color(255, 255, 0),
+    sf::Color(128, 0, 128),
+    sf::Color(0, 255, 0),
+    sf::Color(255, 0, 0),
+    sf::Color(255, 127, 0),
+    sf::Color(0, 0, 255)};
+
 Board::Board(int t, int l) : top{t}, left{l}
 {
   for (int i = 0; i < ROWS; i++)
@@ -23,21 +33,19 @@ int Board::get_x_y(int x, int y)
 int Board::clear_rows()
 {
   int num_cleared = 0;
-  int i = 0;
-  while (i < ROWS)
+  static auto full_row = [](std::array<int, COLS> row)
   {
-    std::array row = board.at(i);
-    if (!std::count(row.begin(), row.end(), -1))
+    return std::count(row.begin(), row.end(), -1) > 0;
+  };
+  auto new_end = std::remove_if(board.begin(), board.end(), full_row);
+  if (new_end != board.end())
+  {
+    num_cleared = std::distance(new_end, board.end());
+    while (new_end != board.end())
     {
-      board.erase(std::next(board.begin() + i));
-      std::array<int, COLS> empty_row;
-      empty_row.fill(-1);
-      board.push_back(empty_row);
-      num_cleared++;
-    }
-    else
-    {
-      i++;
+      *new_end = std::array<int, COLS>{};
+      (*new_end).fill(-1);
+      new_end = std::next(new_end);
     }
   }
   return num_cleared;

@@ -18,10 +18,10 @@ class Tetromino
 {
 public:
   static constexpr int NUM_OFFSETS = 3;
-  const std::array<std::array<sf::Vector2i, 4>, 4> norm_cw_wallkicks = {{{sf::Vector2i(0, 0), sf::Vector2i(0, 0), sf::Vector2i(0, 0), sf::Vector2i(0, 0)},
-                                                                         {sf::Vector2i(0, 0), sf::Vector2i(0, 0), sf::Vector2i(0, 0), sf::Vector2i(0, 0)},
-                                                                         {sf::Vector2i(0, 0), sf::Vector2i(0, 0), sf::Vector2i(0, 0), sf::Vector2i(0, 0)},
-                                                                         {sf::Vector2i(0, 0), sf::Vector2i(0, 0), sf::Vector2i(0, 0), sf::Vector2i(0, 0)}}};
+  static constexpr int NUM_ORIENTATIONS = 4;
+  static constexpr int NUM_KICKS = 4;
+  static const std::array<std::array<sf::Vector2i, NUM_KICKS>, NUM_ORIENTATIONS> norm_cw_wallkicks;
+  static const std::array<std::array<sf::Vector2i, NUM_KICKS>, NUM_ORIENTATIONS> i_cw_wallkicks;
 
   Tetromino();
   Tetromino(Shape shape);
@@ -29,7 +29,9 @@ public:
 
   Shape get_shape() const;
   sf::Vector2i get_center() const;
+  void set_center(sf::Vector2i new_center);
   std::array<sf::Vector2i, NUM_OFFSETS> get_offsets() const;
+  void set_offsets(std::array<sf::Vector2i, NUM_OFFSETS> new_offsets);
   void move(int x_delta, int y_delta);
   void move_down();
   void move_left();

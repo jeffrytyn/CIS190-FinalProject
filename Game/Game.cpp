@@ -94,6 +94,35 @@ bool Game::can_move(int x_delta, int y_delta)
   return true;
 }
 
+bool Game::attempt_rotate(bool cw)
+{
+  sf::Vector2i old_cent = piece.get_center();
+  std::array<sf::Vector2i, Tetromino::NUM_OFFSETS> old_offsets = piece.get_offsets();
+  int test_num = 0;
+  if (cw)
+    piece.rotate_right();
+  else
+    piece.rotate_left();
+  while (!can_move(0, 0) && test_num < 4)
+  {
+    if (cw)
+      piece.right_wallkick(test_num);
+    else
+      piece.left_wallkick(test_num);
+    test_num++;
+  }
+  if (test_num == 4)
+  {
+    piece.set_center(old_cent);
+    piece.set_offsets(old_offsets);
+    return false;
+  }
+  else
+  {
+    return true;
+  }
+}
+
 void Game::draw(sf::RenderTarget &rt) const
 {
   board.draw(rt);

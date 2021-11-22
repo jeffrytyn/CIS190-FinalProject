@@ -16,6 +16,7 @@ public:
 
   bool check_free_coord(int x, int y);
   bool can_move(int x_delta, int y_delta);
+  bool attempt_rotate(bool cw);
   void genPiece();
   void newRound();
 
