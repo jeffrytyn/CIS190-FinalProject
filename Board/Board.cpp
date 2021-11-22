@@ -53,7 +53,7 @@ void Board::draw(sf::RenderTarget &rt) const
     for (int j = 0; j < COLS; j++)
     {
       int shape = board.at(i).at(j);
-      block.setFillColor(shape == -1 ? sf::Color(127, 127, 127) : colors.at(shape));
+      block.setFillColor(shape == -1 ? EMPTY_CELL : colors.at(shape));
       block.setPosition(left + j * BORDERED_CELL_SIZE, top + i * BORDERED_CELL_SIZE);
       rt.draw(block);
     }

@@ -7,7 +7,7 @@ Tetromino::Tetromino(Shape shape) : shape{shape}, orientation{0}
 {
   switch (shape)
   {
-  case I: // I
+  case I:
   {
     center = sf::Vector2i(1, 0);
     offsets[0] = sf::Vector2i(-1, 0);
@@ -15,7 +15,7 @@ Tetromino::Tetromino(Shape shape) : shape{shape}, orientation{0}
     offsets[2] = sf::Vector2i(3, 0);
     break;
   }
-  case J: // J
+  case J:
   {
     center = sf::Vector2i(1, 1);
     offsets[0] = sf::Vector2i(-1, -1);
@@ -23,7 +23,7 @@ Tetromino::Tetromino(Shape shape) : shape{shape}, orientation{0}
     offsets[2] = sf::Vector2i(1, 0);
     break;
   }
-  case L: // L
+  case L:
   {
     center = sf::Vector2i(1, 1);
     offsets[0] = sf::Vector2i(-1, 0);
@@ -31,7 +31,7 @@ Tetromino::Tetromino(Shape shape) : shape{shape}, orientation{0}
     offsets[2] = sf::Vector2i(1, -1);
     break;
   }
-  case O: // O
+  case O:
   {
     center = sf::Vector2i(0, 0);
     offsets[0] = sf::Vector2i(1, 0);
@@ -39,7 +39,7 @@ Tetromino::Tetromino(Shape shape) : shape{shape}, orientation{0}
     offsets[2] = sf::Vector2i(1, 1);
     break;
   }
-  case S: // S
+  case S:
   {
     center = sf::Vector2i(1, 1);
     offsets[0] = sf::Vector2i(-1, 0);
@@ -47,7 +47,7 @@ Tetromino::Tetromino(Shape shape) : shape{shape}, orientation{0}
     offsets[2] = sf::Vector2i(1, -1);
     break;
   }
-  case T: // T
+  case T:
   {
     center = sf::Vector2i(1, 1);
     offsets[0] = sf::Vector2i(-1, 0);
@@ -55,7 +55,7 @@ Tetromino::Tetromino(Shape shape) : shape{shape}, orientation{0}
     offsets[2] = sf::Vector2i(1, 0);
     break;
   }
-  case Z: // Z
+  case Z:
   {
     center = sf::Vector2i(1, 1);
     offsets[0] = sf::Vector2i(0, -1);
@@ -113,18 +113,15 @@ void Tetromino::move_right()
   return this->move(1, 0);
 }
 
+// rotations will just swap the offset x and y coords
+// center remains unchanged except for I pieces
 void Tetromino::rotate_right()
 {
-  // wall kicks implement in Game.cpp (if we even do that lOl)
   // rotate clockwise
   if (shape == O)
     return;
-  if (shape == I)
-  {
-  }
   else
   {
-    std::array temp = offsets;
     for (sf::Vector2i offset : offsets)
     {
       int old_x = offset.x;
@@ -132,8 +129,26 @@ void Tetromino::rotate_right()
       offset.x = -old_y;
       offset.y = old_x;
     }
-    // if rotation is out of bounds, try wall kicks
-    // all wall kicks fail = restore temp as offsets
+    if (shape == I)
+    {
+      if (orientation == 0)
+      {
+        center.x++;
+      }
+      else if (orientation == 1)
+      {
+        center.y++;
+      }
+      else if (orientation == 2)
+      {
+        center.x--;
+      }
+      else
+      {
+        center.y--;
+      }
+    }
+    orientation = (orientation + 1) % 4;
   }
 }
 
@@ -142,12 +157,8 @@ void Tetromino::rotate_left()
   // rotate counterclockwise
   if (shape == O)
     return;
-  if (shape == I)
-  {
-  }
   else
   {
-    std::array temp = offsets;
     for (sf::Vector2i offset : offsets)
     {
       int old_x = offset.x;
@@ -155,7 +166,44 @@ void Tetromino::rotate_left()
       offset.x = old_y;
       offset.y = -old_x;
     }
+    if (shape == I)
+    {
+      if (orientation == 0)
+      {
+        center.y++;
+      }
+      else if (orientation == 1)
+      {
+        center.x--;
+      }
+      else if (orientation == 2)
+      {
+        center.y--;
+      }
+      else
+      {
+        center.x++;
+      }
+    }
+    orientation = orientation == 0 ? 3 : orientation - 1;
   }
+}
+
+// wallkicks are used in case rotations go out of bounds/collide with other pieces
+void Tetromino::right_wallkick(int test_num)
+{
+  if (shape == I)
+    ;
+  sf::Vector2i kick = norm_cw_wallkicks.at(orientation == 0 ? 3 : orientation - 1).at(test_num);
+  move(kick.x, kick.y);
+}
+
+void Tetromino::left_wallkick(int test_num)
+{
+  if (shape == I)
+    ;
+  sf::Vector2i kick = norm_cw_wallkicks.at(orientation == 3 ? 0 : orientation + 1).at(test_num);
+  move(-kick.x, -kick.y);
 }
 
 void Tetromino::draw(sf::RenderTarget &rt, const Board &board) const

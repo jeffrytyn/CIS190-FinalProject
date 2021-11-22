@@ -18,6 +18,11 @@ class Tetromino
 {
 public:
   static constexpr int NUM_OFFSETS = 3;
+  const std::array<std::array<sf::Vector2i, 4>, 4> norm_cw_wallkicks = {{{sf::Vector2i(0, 0), sf::Vector2i(0, 0), sf::Vector2i(0, 0), sf::Vector2i(0, 0)},
+                                                                         {sf::Vector2i(0, 0), sf::Vector2i(0, 0), sf::Vector2i(0, 0), sf::Vector2i(0, 0)},
+                                                                         {sf::Vector2i(0, 0), sf::Vector2i(0, 0), sf::Vector2i(0, 0), sf::Vector2i(0, 0)},
+                                                                         {sf::Vector2i(0, 0), sf::Vector2i(0, 0), sf::Vector2i(0, 0), sf::Vector2i(0, 0)}}};
+
   Tetromino();
   Tetromino(Shape shape);
   Tetromino &operator=(const Tetromino &t);
@@ -31,6 +36,8 @@ public:
   void move_right();
   void rotate_right();
   void rotate_left();
+  void right_wallkick(int test_num);
+  void left_wallkick(int test_num);
 
   void draw(sf::RenderTarget &rt, const Board &board) const;
 

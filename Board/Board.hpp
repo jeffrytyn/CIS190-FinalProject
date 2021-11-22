@@ -14,6 +14,7 @@ public:
   static constexpr float CELL_SIZE = BOARD_HEIGHT / ROWS - (2 * CELL_BORDER);
   static constexpr float BORDERED_CELL_SIZE = CELL_SIZE + 2 * CELL_BORDER;
 
+  const sf::Color EMPTY_CELL = sf::Color(127, 127, 127);
   const std::array<sf::Color, 7> colors = {
       sf::Color(0, 255, 255),
       sf::Color(255, 255, 0),
