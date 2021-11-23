@@ -32,25 +32,31 @@ int Board::get_x_y(int x, int y)
 
 int Board::clear_rows()
 {
-  int num_cleared = 0;
-  static auto full_row = [](std::array<int, COLS> row)
+  static auto full_row = [](std::array<int, COLS> &row)
   {
-    return std::count(row.begin(), row.end(), -1) > 0;
+    return std::count(row.begin(), row.end(), -1) == 0;
   };
-  auto new_end = std::remove_if(board.begin(), board.end(), full_row);
-  if (new_end != board.end())
+  std::vector<std::array<int, COLS>>::iterator curr = board.end() - 1;
+  int num_cleared = 0;
+  while (curr != board.begin())
   {
-    num_cleared = std::distance(new_end, board.end());
-    while (new_end != board.end())
+    if (full_row(*curr))
     {
-      *new_end = std::array<int, COLS>{};
-      (*new_end).fill(-1);
-      new_end = std::next(new_end);
+      num_cleared++;
+      curr--;
+      continue;
     }
+    *(curr + num_cleared) = std::move(*curr);
+    curr--;
+  }
+  for (int i = 0; i < num_cleared; i++)
+  {
+    (*(board.begin() + i)).fill(-1);
   }
   return num_cleared;
 }
 
+// implemented where top left = [ROW, 0] and bottom right = [0, COLS]
 void Board::draw(sf::RenderTarget &rt) const
 {
   sf::RectangleShape block{sf::Vector2f(CELL_SIZE, CELL_SIZE)};
@@ -76,4 +82,18 @@ void Board::drawCoord(sf::RenderTarget &rt, int x, int y, int color) const
   block.setFillColor(colors.at(color));
   block.setPosition(left + x * BORDERED_CELL_SIZE, top + y * BORDERED_CELL_SIZE);
   rt.draw(block);
+}
+
+std::ostream &operator<<(std::ostream &out, const Board &b)
+{
+  for (std::array<int, Board::COLS> row : b.board)
+  {
+    out << "{ ";
+    for (int shape : row)
+    {
+      out << shape << " ";
+    }
+    out << "}\n";
+  }
+  return out;
 }

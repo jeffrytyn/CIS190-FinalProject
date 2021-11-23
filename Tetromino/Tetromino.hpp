@@ -43,6 +43,8 @@ public:
 
   void draw(sf::RenderTarget &rt, const Board &board) const;
 
+  friend std::ostream &operator<<(std::ostream &out, const Tetromino &t);
+
 private:
   Shape shape;
   sf::Vector2i center;

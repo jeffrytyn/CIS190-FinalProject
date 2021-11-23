@@ -21,7 +21,7 @@ public:
   void newRound();
 
 private:
-  sf::Time secondsSinceLastMove;
+  sf::Time sinceLastMove;
   Board board;
   Tetromino piece;
   int score;

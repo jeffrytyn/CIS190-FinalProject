@@ -1,5 +1,4 @@
 #include "Tetromino.hpp"
-#include <iostream>
 
 const std::array<std::array<sf::Vector2i, Tetromino::NUM_KICKS>, Tetromino::NUM_ORIENTATIONS> Tetromino::norm_cw_wallkicks = {{{sf::Vector2i(-1, 0), sf::Vector2i(-1, -1), sf::Vector2i(0, 2), sf::Vector2i(-1, 2)},
                                                                                                                                {sf::Vector2i(1, 0), sf::Vector2i(1, 1), sf::Vector2i(0, -2), sf::Vector2i(1, -2)},
@@ -20,8 +19,8 @@ Tetromino::Tetromino(Shape shape) : shape{shape}, orientation{0}
   {
     center = sf::Vector2i(1, 0);
     offsets[0] = sf::Vector2i(-1, 0);
-    offsets[1] = sf::Vector2i(2, 0);
-    offsets[2] = sf::Vector2i(3, 0);
+    offsets[1] = sf::Vector2i(1, 0);
+    offsets[2] = sf::Vector2i(2, 0);
     break;
   }
   case J:
@@ -141,7 +140,7 @@ void Tetromino::rotate_right()
     return;
   else
   {
-    for (sf::Vector2i offset : offsets)
+    for (sf::Vector2i &offset : offsets)
     {
       int old_x = offset.x;
       int old_y = offset.y;
@@ -178,7 +177,7 @@ void Tetromino::rotate_left()
     return;
   else
   {
-    for (sf::Vector2i offset : offsets)
+    for (sf::Vector2i &offset : offsets)
     {
       int old_x = offset.x;
       int old_y = offset.y;
@@ -245,4 +244,17 @@ void Tetromino::draw(sf::RenderTarget &rt, const Board &board) const
   {
     board.drawCoord(rt, center.x + offset.x, center.y + offset.y, shape);
   }
+}
+
+std::ostream &operator<<(std::ostream &out, const Tetromino &t)
+{
+  out << t.shape << "\n";
+  out << "Center: " << t.center.x << ", " << t.center.y << "\n";
+  out << "Offsets: ";
+  for (auto offset : t.offsets)
+  {
+    out << "{" << offset.x << ", " << offset.y << "} ";
+  }
+  out << "\n";
+  return out;
 }

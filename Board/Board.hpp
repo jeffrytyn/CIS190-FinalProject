@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include <iostream>
 #include <SFML/Graphics.hpp>
 
 class Board
@@ -23,6 +24,8 @@ public:
   int clear_rows();
   void draw(sf::RenderTarget &rt) const;
   void drawCoord(sf::RenderTarget &rt, int x, int y, int color) const;
+
+  friend std::ostream &operator<<(std::ostream &out, const Board &b);
 
 private:
   std::vector<std::array<int, COLS>> board;

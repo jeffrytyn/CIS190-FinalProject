@@ -4,8 +4,9 @@
 
 Game::Game() : board{BOARD_VERT_OFFSET, BOARD_HORZ_OFFSET}, score{0}
 {
+  srand(time(0));
   genPiece();
-  secondsSinceLastMove = sf::milliseconds(0);
+  sinceLastMove = sf::milliseconds(0);
 }
 
 void Game::handleKey(const sf::Keyboard::Key &c)
@@ -30,7 +31,17 @@ void Game::handleKey(const sf::Keyboard::Key &c)
       newRound();
     else
       piece.move_down();
-    secondsSinceLastMove = sf::Time::Zero;
+    sinceLastMove = sf::Time::Zero;
+    break;
+  }
+  case sf::Keyboard::X:
+  {
+    attempt_rotate(true);
+    break;
+  }
+  case sf::Keyboard::Z:
+  {
+    attempt_rotate(false);
     break;
   }
   }
@@ -38,24 +49,24 @@ void Game::handleKey(const sf::Keyboard::Key &c)
 
 void Game::update(const sf::Time &delta)
 {
-  secondsSinceLastMove += delta;
-  if (secondsSinceLastMove > FRAME_TIME)
+  sinceLastMove += delta;
+  if (sinceLastMove > FRAME_TIME)
   {
     if (!can_move(0, 1))
     {
-      std::cout << "Start new round\n";
       newRound();
     }
     else
       piece.move_down();
-    secondsSinceLastMove = sf::Time::Zero;
+    sinceLastMove = sf::Time::Zero;
   }
 }
 
 void Game::genPiece()
 {
-  piece = Tetromino{(Shape)(rand() % 7)};
-  piece.move(board.COLS / 2 - 1, 0);
+  Shape shape = (Shape)(rand() % 7);
+  piece = Tetromino{shape};
+  piece.move(board.COLS / 2 - 2, 0);
 }
 
 void Game::newRound()
