@@ -38,15 +38,19 @@ int Board::clear_rows()
   };
   std::vector<std::array<int, COLS>>::iterator curr = board.end() - 1;
   int num_cleared = 0;
-  while (curr != board.begin())
+  while (curr >= board.begin())
   {
     if (full_row(*curr))
     {
       num_cleared++;
+      if (curr == board.begin())
+        break;
       curr--;
       continue;
     }
     *(curr + num_cleared) = std::move(*curr);
+    if (curr == board.begin())
+      break;
     curr--;
   }
   for (int i = 0; i < num_cleared; i++)
