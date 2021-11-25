@@ -1,9 +1,17 @@
 #include "Game.hpp"
 #include <random>
 #include <iostream>
+#include <string>
+
+sf::Font Game::font = sf::Font();
 
 Game::Game() : board{BOARD_VERT_OFFSET, BOARD_HORZ_OFFSET}, score{0}
 {
+  sf::Text scoreBoard;
+  if (!font.loadFromFile("open-sans/OpenSans-Regular.ttf"))
+  {
+    std::cout << "Error loading font.\n";
+  }
   srand(time(0));
   genPiece();
   sinceLastMove = sf::milliseconds(0);
@@ -82,7 +90,6 @@ void Game::newRound()
   {
     // increment score
     score += cleared;
-    std::cout << "Score: " << score << "\n";
   }
   genPiece();
 }
@@ -138,4 +145,11 @@ void Game::draw(sf::RenderTarget &rt) const
 {
   board.draw(rt);
   piece.draw(rt, board);
+  sf::Text scoreBoard;
+  scoreBoard.setPosition(sf::Vector2f(BOARD_HORZ_OFFSET + Board::BOARD_WIDTH + 50, BOARD_VERT_OFFSET));
+  scoreBoard.setFont(font);
+  scoreBoard.setString("Score: " + std::to_string(score));
+  scoreBoard.setCharacterSize(30);
+  scoreBoard.setFillColor(sf::Color::White);
+  rt.draw(scoreBoard);
 }
