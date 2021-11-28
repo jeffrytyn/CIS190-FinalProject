@@ -1,7 +1,7 @@
 #pragma once
 #include <array>
 #include <iostream>
-#include <SFML/Graphics.hpp>
+#include "../SFML-2.5.1/include/SFML/Graphics.hpp"
 
 class Board
 {

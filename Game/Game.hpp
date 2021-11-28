@@ -1,4 +1,4 @@
-#include <SFML/Graphics.hpp>
+#include "../SFML-2.5.1/include/SFML/Graphics.hpp"
 #include "../Tetromino/Tetromino.hpp"
 #include "../Board/Board.hpp"
 
