@@ -9,10 +9,8 @@ Game::Game() : board{Board::BOARD_VERT_OFFSET, Board::BOARD_HORZ_OFFSET}, score{
   {
     std::cout << "Error loading font.\n";
   }
-  srand(time(0));
-  genPiece();
-  sinceLastMove = sf::milliseconds(0);
-  is_playing = true;
+
+  reset_helper();
 }
 
 void Game::handleKey(const sf::Keyboard::Key &c)
@@ -53,6 +51,11 @@ void Game::handleKey(const sf::Keyboard::Key &c)
   case sf::Keyboard::R:
   {
     reset();
+    break;
+  }
+  case sf::Keyboard::Space:
+  {
+    hold();
     break;
   }
   }
@@ -113,6 +116,7 @@ void Game::newRound()
     score += cleared;
   }
   genPiece();
+  can_hold = true;
 }
 
 bool Game::check_free_coord(int x, int y)
@@ -167,10 +171,42 @@ bool Game::attempt_rotate(bool cw)
 void Game::reset()
 {
   board.reset();
+  reset_helper();
+}
+
+void Game::reset_helper()
+{
   srand(time(0));
   genPiece();
   sinceLastMove = sf::milliseconds(0);
   is_playing = true;
+  can_hold = true;
+  piece_hold = piece;
+
+  Tetromino hold_center{piece.get_shape()};
+  hold_center.move(Board::COLS + 2, 2);
+  piece_hold.set_center(hold_center.get_center());
+}
+
+void Game::hold()
+{
+  if (can_hold)
+  {
+    Tetromino new_piece_hold{piece};
+    Tetromino hold_center{piece.get_shape()};
+    hold_center.move(Board::COLS + 2, 2);
+    new_piece_hold.set_center(hold_center.get_center());
+
+    Tetromino new_piece{piece_hold};
+    Tetromino center{piece_hold.get_shape()};
+    center.move(board.COLS / 2 - 2, 0);
+    new_piece.set_center(center.get_center());
+
+    piece = new_piece;
+    piece_hold = new_piece_hold;
+
+    can_hold = false;
+  }
 }
 
 std::string Game::get_highscores() const
@@ -191,9 +227,10 @@ void Game::draw(sf::RenderTarget &rt) const
 {
   board.draw(rt);
   piece.draw(rt, board);
+  piece_hold.draw(rt, board);
 
   sf::Text holdText;
-  holdText.setPosition(sf::Vector2f(Board::BOARD_HORZ_OFFSET + Board::BOARD_WIDTH + Board::BOARD_HORZ_OFFSET_TEXT, Board::BOARD_VERT_OFFSET - 10));
+  holdText.setPosition(sf::Vector2f(Board::BOARD_HORZ_OFFSET + Board::BOARD_WIDTH + Board::BOARD_HORZ_OFFSET_TEXT, Board::BOARD_VERT_OFFSET));
   holdText.setFont(Board::font);
   holdText.setString("Hold");
   holdText.setCharacterSize(30);

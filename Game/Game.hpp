@@ -22,6 +22,8 @@ public:
   void genPiece();
   void newRound();
   void reset();
+  void reset_helper();
+  void hold();
 
   std::string get_highscores() const;
 
@@ -29,6 +31,10 @@ private:
   sf::Time sinceLastMove;
   Board board;
   Tetromino piece;
+
+  Tetromino piece_hold;
+  bool can_hold;
+
   int score;
   bool is_playing;
 };
