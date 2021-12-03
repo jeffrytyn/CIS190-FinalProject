@@ -1,6 +1,11 @@
 #include "../SFML-2.5.1/include/SFML/Graphics.hpp"
 #include "../Tetromino/Tetromino.hpp"
 #include "../Board/Board.hpp"
+#include <random>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
 
 class Game
 {
@@ -21,6 +26,8 @@ public:
   void genPiece();
   void newRound();
   void reset();
+
+  std::string get_highscores() const;
 
 private:
   sf::Time sinceLastMove;

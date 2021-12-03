@@ -1,8 +1,4 @@
 #include "Game.hpp"
-#include <random>
-#include <iostream>
-#include <string>
-#include <array>
 
 sf::Font Game::font = sf::Font();
 
@@ -177,10 +173,23 @@ void Game::reset()
   is_playing = true;
 }
 
+std::string Game::get_highscores() const
+{
+  std::ifstream file{"highscores.txt"};
+  std::string str{""};
+  std::string buffer;
+  while (getline(file, buffer))
+  {
+    str = str + "\n" + buffer;
+  }
+  return str;
+}
+
 void Game::draw(sf::RenderTarget &rt) const
 {
   board.draw(rt);
   piece.draw(rt, board);
+
   sf::Text scoreBoard;
   scoreBoard.setPosition(sf::Vector2f(BOARD_HORZ_OFFSET + Board::BOARD_WIDTH + 50, BOARD_VERT_OFFSET));
   scoreBoard.setFont(font);
@@ -188,4 +197,12 @@ void Game::draw(sf::RenderTarget &rt) const
   scoreBoard.setCharacterSize(30);
   scoreBoard.setFillColor(sf::Color::White);
   rt.draw(scoreBoard);
+
+  sf::Text highScores;
+  highScores.setPosition(sf::Vector2f(BOARD_HORZ_OFFSET + Board::BOARD_WIDTH + 50, BOARD_VERT_OFFSET + 40));
+  highScores.setFont(font);
+  highScores.setString("High Scores" + get_highscores());
+  highScores.setCharacterSize(15);
+  highScores.setFillColor(sf::Color::Blue);
+  rt.draw(highScores);
 }
