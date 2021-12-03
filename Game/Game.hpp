@@ -20,10 +20,12 @@ public:
   bool attempt_rotate(bool cw);
   void genPiece();
   void newRound();
+  void reset();
 
 private:
   sf::Time sinceLastMove;
   Board board;
   Tetromino piece;
   int score;
+  bool is_playing;
 };

@@ -60,6 +60,14 @@ int Board::clear_rows()
   return num_cleared;
 }
 
+void Board::reset()
+{
+  for (int i = 0; i < ROWS; i++)
+  {
+    (*(board.begin() + i)).fill(-1);
+  }
+}
+
 // implemented where top left = [ROW, 0] and bottom right = [0, COLS]
 void Board::draw(sf::RenderTarget &rt) const
 {

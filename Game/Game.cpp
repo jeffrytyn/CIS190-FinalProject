@@ -2,6 +2,7 @@
 #include <random>
 #include <iostream>
 #include <string>
+#include <array>
 
 sf::Font Game::font = sf::Font();
 
@@ -15,6 +16,7 @@ Game::Game() : board{BOARD_VERT_OFFSET, BOARD_HORZ_OFFSET}, score{0}
   srand(time(0));
   genPiece();
   sinceLastMove = sf::milliseconds(0);
+  is_playing = true;
 }
 
 void Game::handleKey(const sf::Keyboard::Key &c)
@@ -52,13 +54,18 @@ void Game::handleKey(const sf::Keyboard::Key &c)
     attempt_rotate(false);
     break;
   }
+  case sf::Keyboard::R:
+  {
+    reset();
+    break;
+  }
   }
 }
 
 void Game::update(const sf::Time &delta)
 {
   sinceLastMove += delta;
-  if (sinceLastMove > FRAME_TIME)
+  if (sinceLastMove > FRAME_TIME && is_playing)
   {
     if (!can_move(0, 1))
     {
@@ -73,8 +80,25 @@ void Game::update(const sf::Time &delta)
 void Game::genPiece()
 {
   Shape shape = (Shape)(rand() % 7);
-  piece = Tetromino{shape};
-  piece.move(board.COLS / 2 - 2, 0);
+  Tetromino piece_next = Tetromino{shape};
+  piece_next.move(board.COLS / 2 - 2, 0);
+  sf::Vector2i center = piece_next.get_center();
+  bool is_space = board.get_x_y(center.x, center.y) == -1;
+
+  for (sf::Vector2i offset : piece_next.get_offsets())
+  {
+    // there's space if all blocks level or lower than center can fit
+    if (offset.y >= 0 && board.get_x_y(center.x + offset.x, center.y + offset.y) != -1)
+      is_space = false;
+  }
+  if (is_space)
+  {
+    piece = piece_next;
+  }
+  else
+  {
+    is_playing = false;
+  }
 }
 
 void Game::newRound()
@@ -85,6 +109,7 @@ void Game::newRound()
   {
     board.set_x_y(center.x + offset.x, center.y + offset.y, piece.get_shape());
   }
+
   int cleared = board.clear_rows();
   if (cleared != 0)
   {
@@ -101,6 +126,8 @@ bool Game::check_free_coord(int x, int y)
 
 bool Game::can_move(int x_delta, int y_delta)
 {
+  if (!is_playing)
+    return false;
   sf::Vector2i center = piece.get_center();
   if (!check_free_coord(center.x + x_delta, center.y + y_delta))
     return false;
@@ -139,6 +166,15 @@ bool Game::attempt_rotate(bool cw)
   {
     return true;
   }
+}
+
+void Game::reset()
+{
+  board.reset();
+  srand(time(0));
+  genPiece();
+  sinceLastMove = sf::milliseconds(0);
+  is_playing = true;
 }
 
 void Game::draw(sf::RenderTarget &rt) const
