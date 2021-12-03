@@ -6,6 +6,11 @@
 class Board
 {
 public:
+  static constexpr unsigned int BOARD_VERT_OFFSET = 50;
+  static constexpr unsigned int BOARD_HORZ_OFFSET = 25;
+  static constexpr unsigned int BOARD_HORZ_OFFSET_TEXT = 50;
+  static sf::Font font;
+
   static constexpr int ROWS = 20;
   static constexpr int COLS = 10;
   static constexpr int BOARD_WIDTH = 300;

@@ -84,6 +84,16 @@ void Board::draw(sf::RenderTarget &rt) const
       rt.draw(block);
     }
   }
+
+  for (int i = 0; i < 5; i++)
+  {
+    for (int j = 0; j < 5; j++)
+    {
+      block.setFillColor(EMPTY_CELL);
+      block.setPosition((BOARD_WIDTH + BOARD_HORZ_OFFSET_TEXT) + left + j * BORDERED_CELL_SIZE, (30) + top + i * BORDERED_CELL_SIZE);
+      rt.draw(block);
+    }
+  }
 }
 
 void Board::drawCoord(sf::RenderTarget &rt, int x, int y, int color) const

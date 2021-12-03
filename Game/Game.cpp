@@ -1,11 +1,11 @@
 #include "Game.hpp"
 
-sf::Font Game::font = sf::Font();
+sf::Font Board::font = sf::Font();
 
-Game::Game() : board{BOARD_VERT_OFFSET, BOARD_HORZ_OFFSET}, score{0}
+Game::Game() : board{Board::BOARD_VERT_OFFSET, Board::BOARD_HORZ_OFFSET}, score{0}
 {
   sf::Text scoreBoard;
-  if (!font.loadFromFile("open-sans/OpenSans-Regular.ttf"))
+  if (!Board::font.loadFromFile("open-sans/OpenSans-Regular.ttf"))
   {
     std::cout << "Error loading font.\n";
   }
@@ -178,9 +178,11 @@ std::string Game::get_highscores() const
   std::ifstream file{"highscores.txt"};
   std::string str{""};
   std::string buffer;
+  int i = 1;
   while (getline(file, buffer))
   {
-    str = str + "\n" + buffer;
+    str = str + "\n" + std::to_string(i) + ". " + buffer;
+    i++;
   }
   return str;
 }
@@ -190,17 +192,25 @@ void Game::draw(sf::RenderTarget &rt) const
   board.draw(rt);
   piece.draw(rt, board);
 
+  sf::Text holdText;
+  holdText.setPosition(sf::Vector2f(Board::BOARD_HORZ_OFFSET + Board::BOARD_WIDTH + Board::BOARD_HORZ_OFFSET_TEXT, Board::BOARD_VERT_OFFSET - 10));
+  holdText.setFont(Board::font);
+  holdText.setString("Hold");
+  holdText.setCharacterSize(30);
+  holdText.setFillColor(sf::Color::White);
+  rt.draw(holdText);
+
   sf::Text scoreBoard;
-  scoreBoard.setPosition(sf::Vector2f(BOARD_HORZ_OFFSET + Board::BOARD_WIDTH + 50, BOARD_VERT_OFFSET));
-  scoreBoard.setFont(font);
+  scoreBoard.setPosition(sf::Vector2f(Board::BOARD_HORZ_OFFSET + Board::BOARD_WIDTH + Board::BOARD_HORZ_OFFSET_TEXT, Board::BOARD_VERT_OFFSET + 200));
+  scoreBoard.setFont(Board::font);
   scoreBoard.setString("Score: " + std::to_string(score));
   scoreBoard.setCharacterSize(30);
   scoreBoard.setFillColor(sf::Color::White);
   rt.draw(scoreBoard);
 
   sf::Text highScores;
-  highScores.setPosition(sf::Vector2f(BOARD_HORZ_OFFSET + Board::BOARD_WIDTH + 50, BOARD_VERT_OFFSET + 40));
-  highScores.setFont(font);
+  highScores.setPosition(sf::Vector2f(Board::BOARD_HORZ_OFFSET + Board::BOARD_WIDTH + Board::BOARD_HORZ_OFFSET_TEXT, Board::BOARD_VERT_OFFSET + 240));
+  highScores.setFont(Board::font);
   highScores.setString("High Scores" + get_highscores());
   highScores.setCharacterSize(15);
   highScores.setFillColor(sf::Color::Blue);
