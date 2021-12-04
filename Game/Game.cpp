@@ -181,11 +181,8 @@ void Game::reset_helper()
   sinceLastMove = sf::milliseconds(0);
   is_playing = true;
   can_hold = true;
-  piece_hold = piece;
-
-  Tetromino hold_center{piece.get_shape()};
-  hold_center.move(Board::COLS + 2, 2);
-  piece_hold.set_center(hold_center.get_center());
+  Tetromino null_piece{};
+  piece_hold = null_piece;
 }
 
 void Game::hold()
@@ -197,14 +194,20 @@ void Game::hold()
     hold_center.move(Board::COLS + 2, 2);
     new_piece_hold.set_center(hold_center.get_center());
 
-    Tetromino new_piece{piece_hold};
-    Tetromino center{piece_hold.get_shape()};
-    center.move(board.COLS / 2 - 2, 0);
-    new_piece.set_center(center.get_center());
+    if (piece_hold.get_is_null())
+    {
+      genPiece();
+    }
+    else
+    {
+      Tetromino new_piece{piece_hold};
+      Tetromino center{piece_hold.get_shape()};
+      center.move(board.COLS / 2 - 2, 0);
+      new_piece.set_center(center.get_center());
+      piece = new_piece;
+    }
 
-    piece = new_piece;
     piece_hold = new_piece_hold;
-
     can_hold = false;
   }
 }
@@ -227,7 +230,8 @@ void Game::draw(sf::RenderTarget &rt) const
 {
   board.draw(rt);
   piece.draw(rt, board);
-  piece_hold.draw(rt, board);
+  if (!piece_hold.get_is_null())
+    piece_hold.draw(rt, board);
 
   sf::Text holdText;
   holdText.setPosition(sf::Vector2f(Board::BOARD_HORZ_OFFSET + Board::BOARD_WIDTH + Board::BOARD_HORZ_OFFSET_TEXT, Board::BOARD_VERT_OFFSET));

@@ -27,6 +27,7 @@ public:
   Tetromino(Shape shape);
   Tetromino &operator=(const Tetromino &t);
 
+  bool get_is_null() const;
   Shape get_shape() const;
   sf::Vector2i get_center() const;
   void set_center(sf::Vector2i new_center);
@@ -50,4 +51,5 @@ private:
   sf::Vector2i center;
   std::array<sf::Vector2i, NUM_OFFSETS> offsets;
   int orientation;
+  bool is_null;
 };

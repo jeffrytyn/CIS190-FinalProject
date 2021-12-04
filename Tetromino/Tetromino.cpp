@@ -9,10 +9,14 @@ const std::array<std::array<sf::Vector2i, Tetromino::NUM_KICKS>, Tetromino::NUM_
                                                                                                                             {sf::Vector2i(2, 0), sf::Vector2i(-1, 0), sf::Vector2i(2, -1), sf::Vector2i(-1, 2)},
                                                                                                                             {sf::Vector2i(1, 0), sf::Vector2i(-2, 0), sf::Vector2i(1, 2), sf::Vector2i(-2, -1)}}};
 
-Tetromino::Tetromino() {}
+Tetromino::Tetromino()
+{
+  is_null = true;
+}
 
 Tetromino::Tetromino(Shape shape) : shape{shape}, orientation{0}
 {
+  is_null = false;
   switch (shape)
   {
   case I:
@@ -82,7 +86,13 @@ Tetromino &Tetromino::operator=(const Tetromino &tet)
   shape = tet.shape;
   offsets = tet.offsets;
   orientation = tet.orientation;
+  is_null = tet.is_null;
   return *this;
+}
+
+bool Tetromino::get_is_null() const
+{
+  return is_null;
 }
 
 Shape Tetromino::get_shape() const
