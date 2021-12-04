@@ -1,4 +1,4 @@
-#include "../SFML-2.5.1/include/SFML/Graphics.hpp"
+#include "SFML/Graphics.hpp"
 #include "../Tetromino/Tetromino.hpp"
 #include "../Board/Board.hpp"
 #include <random>
@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <array>
 
 class Game
 {
@@ -36,5 +37,6 @@ private:
   bool can_hold;
 
   int score;
+  std::array<int, 10> scores;
   bool is_playing;
 };

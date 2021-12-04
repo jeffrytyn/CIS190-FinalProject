@@ -11,6 +11,16 @@ Game::Game() : board{Board::BOARD_VERT_OFFSET, Board::BOARD_HORZ_OFFSET}, score{
   }
 
   reset_helper();
+  scores.fill(0);
+
+  std::ifstream file{"highscores.txt"};
+  std::string buffer;
+  int i = 0;
+  while (getline(file, buffer))
+  {
+    scores[i] = std::stoi(buffer);
+    i++;
+  }
 }
 
 void Game::handleKey(const sf::Keyboard::Key &c)
@@ -53,9 +63,14 @@ void Game::handleKey(const sf::Keyboard::Key &c)
     reset();
     break;
   }
-  case sf::Keyboard::Space:
+  case sf::Keyboard::C:
   {
     hold();
+    break;
+  }
+  case sf::Keyboard::Space:
+  {
+    // hard drop
     break;
   }
   }
@@ -73,6 +88,19 @@ void Game::update(const sf::Time &delta)
     else
       piece.move_down();
     sinceLastMove = sf::Time::Zero;
+  }
+
+  if (score > scores[9])
+  {
+    scores[9] = score;
+    std::sort(scores.begin(), scores.end(), std::greater<>());
+    std::string str{""};
+    for (int i = 0; i < 10; i++)
+    {
+      str = str + std::to_string(scores[i]) + "\n";
+    }
+    std::ofstream ofs{"highscores.txt"};
+    ofs << str;
   }
 }
 
@@ -214,14 +242,10 @@ void Game::hold()
 
 std::string Game::get_highscores() const
 {
-  std::ifstream file{"highscores.txt"};
   std::string str{""};
-  std::string buffer;
-  int i = 1;
-  while (getline(file, buffer))
+  for (int i = 0; i < 10; i++)
   {
-    str = str + "\n" + std::to_string(i) + ". " + buffer;
-    i++;
+    str = str + "\n" + std::to_string(i + 1) + ". " + std::to_string(scores[i]);
   }
   return str;
 }
