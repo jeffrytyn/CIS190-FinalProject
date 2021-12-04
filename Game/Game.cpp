@@ -70,7 +70,11 @@ void Game::handleKey(const sf::Keyboard::Key &c)
   }
   case sf::Keyboard::Space:
   {
-    // hard drop
+    while (can_move(0, 1))
+    {
+      piece.move_down();
+    }
+    newRound();
     break;
   }
   }
