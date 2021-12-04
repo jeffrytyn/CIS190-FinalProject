@@ -19,16 +19,19 @@ int main()
   {
     while (window.pollEvent(event))
     {
-      switch (event.type)
+      if (game.can_move_buffer())
       {
-      case sf::Event::KeyPressed:
-        game.handleKey(event.key.code);
-        break;
-      case sf::Event::Closed:
-        window.close();
-        break;
-      default:
-        break;
+        switch (event.type)
+        {
+        case sf::Event::KeyPressed:
+          game.handleKey(event.key.code);
+          break;
+        case sf::Event::Closed:
+          window.close();
+          break;
+        default:
+          break;
+        }
       }
     }
     game.update(clock.restart());

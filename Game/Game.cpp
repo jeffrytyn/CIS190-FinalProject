@@ -45,7 +45,6 @@ void Game::handleKey(const sf::Keyboard::Key &c)
       newRound();
     else
       piece.move_down();
-    sinceLastMove = sf::Time::Zero;
     break;
   }
   case sf::Keyboard::X:
@@ -82,7 +81,12 @@ void Game::handleKey(const sf::Keyboard::Key &c)
 
 void Game::update(const sf::Time &delta)
 {
+  if (is_moving_down && can_move(0, 1))
+  {
+    piece.move_down();
+  }
   sinceLastMove += delta;
+  sinceLastClick += delta;
   if (sinceLastMove > FRAME_TIME && is_playing)
   {
     if (!can_move(0, 1))
@@ -168,7 +172,15 @@ bool Game::can_move(int x_delta, int y_delta)
     if (!check_free_coord(center.x + offset.x + x_delta, center.y + offset.y + y_delta))
       return false;
   }
+
+  sinceLastClick = sf::Time::Zero;
   return true;
+}
+
+bool Game::can_move_buffer()
+{
+
+  return sinceLastClick >= KEY_BUFFER_TIME;
 }
 
 bool Game::attempt_rotate(bool cw)
@@ -264,7 +276,10 @@ void Game::draw(sf::RenderTarget &rt) const
   sf::Text holdText;
   holdText.setPosition(sf::Vector2f(Board::BOARD_HORZ_OFFSET + Board::BOARD_WIDTH + Board::BOARD_HORZ_OFFSET_TEXT, Board::BOARD_VERT_OFFSET));
   holdText.setFont(Board::font);
-  holdText.setString("Hold");
+  if (is_playing)
+    holdText.setString("Hold");
+  else
+    holdText.setString("GAME OVER");
   holdText.setCharacterSize(30);
   holdText.setFillColor(sf::Color::White);
   rt.draw(holdText);
@@ -281,7 +296,7 @@ void Game::draw(sf::RenderTarget &rt) const
   highScores.setPosition(sf::Vector2f(Board::BOARD_HORZ_OFFSET + Board::BOARD_WIDTH + Board::BOARD_HORZ_OFFSET_TEXT, Board::BOARD_VERT_OFFSET + 240));
   highScores.setFont(Board::font);
   highScores.setString("High Scores" + get_highscores());
-  highScores.setCharacterSize(15);
+  highScores.setCharacterSize(20);
   highScores.setFillColor(sf::Color::Blue);
   rt.draw(highScores);
 }

@@ -12,6 +12,7 @@ class Game
 {
 public:
   const sf::Time FRAME_TIME = sf::seconds(1);
+  const sf::Time KEY_BUFFER_TIME = sf::milliseconds(100);
   Game();
   void handleKey(const sf::Keyboard::Key &c);
   void update(const sf::Time &delta);
@@ -19,6 +20,7 @@ public:
 
   bool check_free_coord(int x, int y);
   bool can_move(int x_delta, int y_delta);
+  bool can_move_buffer();
   bool attempt_rotate(bool cw);
   void genPiece();
   void newRound();
@@ -30,6 +32,7 @@ public:
 
 private:
   sf::Time sinceLastMove;
+  sf::Time sinceLastClick;
   Board board;
   Tetromino piece;
 
@@ -39,4 +42,5 @@ private:
   int score;
   std::array<int, 10> scores;
   bool is_playing;
+  bool is_moving_down;
 };
