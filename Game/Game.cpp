@@ -4,6 +4,8 @@ sf::Font Board::font = sf::Font();
 
 Game::Game() : board{Board::BOARD_VERT_OFFSET, Board::BOARD_HORZ_OFFSET}, score{0}
 {
+  sinceLastClick = sf::Time::Zero;
+  sinceLastMove = sf::Time::Zero;
   sf::Text scoreBoard;
   if (!Board::font.loadFromFile("open-sans/OpenSans-Regular.ttf"))
   {
@@ -23,28 +25,38 @@ Game::Game() : board{Board::BOARD_VERT_OFFSET, Board::BOARD_HORZ_OFFSET}, score{
   }
 }
 
-void Game::handleKey(const sf::Keyboard::Key &c)
+void Game::handleKey(const sf::Keyboard::Key &c, const sf::Time &delta)
 {
+  sinceLastClick += delta;
   switch (c)
   {
   case sf::Keyboard::Left:
   {
-    if (can_move(-1, 0))
+    if (sinceLastClick > KEY_BUFFER_TIME && can_move(-1, 0))
+    {
       piece.move_left();
+      sinceLastClick = sf::Time::Zero;
+    }
     break;
   }
   case sf::Keyboard::Right:
   {
-    if (can_move(1, 0))
+    if (sinceLastClick > KEY_BUFFER_TIME && can_move(1, 0))
+    {
       piece.move_right();
+      sinceLastClick = sf::Time::Zero;
+    }
     break;
   }
   case sf::Keyboard::Down:
   {
     if (!can_move(0, 1))
       newRound();
-    else
+    else if (sinceLastClick > KEY_BUFFER_TIME)
+    {
       piece.move_down();
+      sinceLastClick = sf::Time::Zero;
+    }
     break;
   }
   case sf::Keyboard::X:
@@ -73,6 +85,7 @@ void Game::handleKey(const sf::Keyboard::Key &c)
     {
       piece.move_down();
     }
+    sinceLastClick = sf::Time::Zero;
     newRound();
     break;
   }
@@ -86,7 +99,6 @@ void Game::update(const sf::Time &delta)
     piece.move_down();
   }
   sinceLastMove += delta;
-  sinceLastClick += delta;
   if (sinceLastMove > FRAME_TIME && is_playing)
   {
     if (!can_move(0, 1))
@@ -96,6 +108,7 @@ void Game::update(const sf::Time &delta)
     else
       piece.move_down();
     sinceLastMove = sf::Time::Zero;
+    // sinceLastClick = sf::Time::Zero;
   }
 
   if (score > scores[lowest_index_on_highscore])
@@ -152,6 +165,7 @@ void Game::newRound()
   {
     // increment score
     score += cleared;
+    // should set a min frame time i.e. can't go below it
     FRAME_TIME = sf::milliseconds(FRAME_TIME.asMilliseconds() * pow(.9, cleared));
   }
   genPiece();
@@ -175,15 +189,7 @@ bool Game::can_move(int x_delta, int y_delta)
     if (!check_free_coord(center.x + offset.x + x_delta, center.y + offset.y + y_delta))
       return false;
   }
-
-  // sinceLastClick = sf::Time::Zero;
   return true;
-}
-
-bool Game::can_move_buffer()
-{
-
-  return sinceLastClick >= KEY_BUFFER_TIME;
 }
 
 bool Game::attempt_rotate(bool cw)

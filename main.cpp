@@ -12,7 +12,8 @@ int main()
   window.setPosition(sf::Vector2i(WINDOW_X, WINDOW_Y));
   window.setVerticalSyncEnabled(true);
   sf::Event event;
-  sf::Clock clock;
+  sf::Clock update_clock;
+  sf::Clock key_clock;
   Game game;
 
   while (window.isOpen())
@@ -22,7 +23,7 @@ int main()
       switch (event.type)
       {
       case sf::Event::KeyPressed:
-        game.handleKey(event.key.code);
+        game.handleKey(event.key.code, key_clock.restart());
         break;
       case sf::Event::Closed:
         window.close();
@@ -31,7 +32,7 @@ int main()
         break;
       }
     }
-    game.update(clock.restart());
+    game.update(update_clock.restart());
     window.clear();
     game.draw(window);
     window.display();

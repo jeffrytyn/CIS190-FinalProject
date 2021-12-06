@@ -11,16 +11,16 @@
 class Game
 {
 public:
-  sf::Time FRAME_TIME = sf::milliseconds(750);
-  const sf::Time KEY_BUFFER_TIME = sf::milliseconds(1);
+  sf::Time FRAME_TIME = sf::milliseconds(1000);
+  const sf::Time KEY_BUFFER_TIME = sf::milliseconds(70);
+
   Game();
-  void handleKey(const sf::Keyboard::Key &c);
+  void handleKey(const sf::Keyboard::Key &c, const sf::Time &delta);
   void update(const sf::Time &delta);
   void draw(sf::RenderTarget &rt) const;
 
   bool check_free_coord(int x, int y);
   bool can_move(int x_delta, int y_delta);
-  bool can_move_buffer();
   bool attempt_rotate(bool cw);
   void genPiece();
   void newRound();
