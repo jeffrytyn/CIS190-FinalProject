@@ -228,6 +228,7 @@ void Game::reset_helper()
   can_hold = true;
   Tetromino null_piece{};
   piece_hold = null_piece;
+  lowest_index_on_highscore = 9;
 }
 
 void Game::hold()

@@ -40,6 +40,7 @@ private:
   bool can_hold;
 
   int score;
+  int lowest_index_on_highscore;
   std::array<int, 10> scores;
   bool is_playing;
   bool is_moving_down;
