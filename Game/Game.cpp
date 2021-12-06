@@ -98,9 +98,11 @@ void Game::update(const sf::Time &delta)
     sinceLastMove = sf::Time::Zero;
   }
 
-  if (score > scores[9])
+  if (score > scores[lowest_index_on_highscore])
   {
-    scores[9] = score;
+    scores[9] = scores[lowest_index_on_highscore];
+    scores[lowest_index_on_highscore] = score;
+    lowest_index_on_highscore--;
     std::sort(scores.begin(), scores.end(), std::greater<>());
     std::string str{""};
     for (int i = 0; i < 10; i++)
@@ -174,7 +176,7 @@ bool Game::can_move(int x_delta, int y_delta)
       return false;
   }
 
-  sinceLastClick = sf::Time::Zero;
+  // sinceLastClick = sf::Time::Zero;
   return true;
 }
 

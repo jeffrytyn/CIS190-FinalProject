@@ -10,7 +10,7 @@ int main()
 {
   sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Tetris!");
   window.setPosition(sf::Vector2i(WINDOW_X, WINDOW_Y));
-  window.setFramerateLimit(60);
+  window.setVerticalSyncEnabled(true);
   sf::Event event;
   sf::Clock clock;
   Game game;
@@ -19,19 +19,16 @@ int main()
   {
     while (window.pollEvent(event))
     {
-      if (game.can_move_buffer())
+      switch (event.type)
       {
-        switch (event.type)
-        {
-        case sf::Event::KeyPressed:
-          game.handleKey(event.key.code);
-          break;
-        case sf::Event::Closed:
-          window.close();
-          break;
-        default:
-          break;
-        }
+      case sf::Event::KeyPressed:
+        game.handleKey(event.key.code);
+        break;
+      case sf::Event::Closed:
+        window.close();
+        break;
+      default:
+        break;
       }
     }
     game.update(clock.restart());

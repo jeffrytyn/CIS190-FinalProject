@@ -11,8 +11,8 @@
 class Game
 {
 public:
-  sf::Time FRAME_TIME = sf::seconds(1);
-  const sf::Time KEY_BUFFER_TIME = sf::milliseconds(100);
+  sf::Time FRAME_TIME = sf::milliseconds(750);
+  const sf::Time KEY_BUFFER_TIME = sf::milliseconds(1);
   Game();
   void handleKey(const sf::Keyboard::Key &c);
   void update(const sf::Time &delta);
