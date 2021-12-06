@@ -150,7 +150,7 @@ void Game::newRound()
   {
     // increment score
     score += cleared;
-    FRAME_TIME = FRAME_TIME * pow(.9, cleared);
+    FRAME_TIME = sf::milliseconds(FRAME_TIME.asMilliseconds() * pow(.9, cleared));
   }
   genPiece();
   can_hold = true;
